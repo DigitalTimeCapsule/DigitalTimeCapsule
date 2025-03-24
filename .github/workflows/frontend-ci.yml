@@ -33,9 +33,14 @@ jobs:
         run: npm run lint
         working-directory: ./frontend
 
-#      - name: Run tests
-#        run: npm test
-#        working-directory: ./frontend
+      - name: Run tests
+        run: |
+          if ls frontend/src/**/*.test.{js,jsx,ts,tsx} 1> /dev/null 2>&1; then
+            npm test
+          else
+            echo "No test files found, skipping tests."
+          fi
+        working-directory: ./frontend
 
       - name: Build
         run: npm run build
