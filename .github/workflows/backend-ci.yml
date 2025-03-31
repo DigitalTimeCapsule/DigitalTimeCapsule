@@ -26,10 +26,10 @@ jobs:
           cache: maven
 
       - name: Build with Maven
-        run: mvn -B package --file backend/pom.xml
+        run: mvn -B package --file backend/digitaltimecapsule/pom.xml
 
       - name: Run tests
-        run: mvn test --file backend/pom.xml
+        run: mvn test --file backend/digitaltimecapsule/pom.xml
 
       - name: Cache Maven packages
         uses: actions/cache@v3
