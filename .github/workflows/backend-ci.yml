@@ -41,6 +41,18 @@ jobs:
           distribution: 'temurin'
           cache: maven
 
+      - name: Create application.properties for CI
+        run: |
+          mkdir -p backend/digitaltimecapsule/src/main/resources
+          cat <<EOF > backend/digitaltimecapsule/src/main/resources/application.properties
+          spring.datasource.url=jdbc:mysql://localhost:3306/digital_time_capsule
+          spring.datasource.username=user
+          spring.datasource.password=pass
+          spring.datasource.driver-class-name=com.mysql.cj.jdbc.Driver
+          spring.jpa.hibernate.ddl-auto=update
+          spring.jpa.show-sql=true
+          EOF
+
       - name: Build with Maven
         run: mvn -B package --file backend/digitaltimecapsule/pom.xml
 
