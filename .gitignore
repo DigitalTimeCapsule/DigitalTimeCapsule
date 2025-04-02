@@ -30,6 +30,7 @@ hs_err_pid*
 .m2/
 out/
 spring.log
+backend/digitaltimecapsule/src/main/resources/application.properties
 
 # IntelliJ IDEA / Eclipse / VSCode / NetBeans
 .idea/
