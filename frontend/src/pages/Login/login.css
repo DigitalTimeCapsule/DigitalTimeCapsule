@@ -1,12 +1,12 @@
 /* General Styles */
 body {
     font-family: Arial, sans-serif;
-    background-color: #f4f4f4;
     display: flex;
     justify-content: center;
     align-items: center;
     height: 100vh;
     margin: 0;
+    background: linear-gradient(to top right, #eef2f7, #dbeafe);
 }
 
 /* Container */
@@ -51,7 +51,7 @@ body {
 }
 
 .input-group input {
-    width: 100%;
+    width: 92%;
     padding: 10px;
     border: 1px solid #ccc;
     border-radius: 5px;

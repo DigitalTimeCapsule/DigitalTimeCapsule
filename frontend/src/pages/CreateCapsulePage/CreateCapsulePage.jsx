@@ -7,7 +7,7 @@ import "./CreateCapsulePage.css";
 const CreateCapsulePage = () => {
     const {register, handleSubmit, reset, watch, formState: {errors}} = useForm();
     const [statusMessage, setStatusMessage] = useState("");
-    const capsuleType = watch("type", "text"); // default to 'text'
+    const capsuleType = watch("type", "text");
 
     const onSubmit = async (data) => {
         const currentDate = new Date();
@@ -31,8 +31,12 @@ const CreateCapsulePage = () => {
         }
 
         try {
+            const token = localStorage.getItem("authToken");
             await axios.post("http://localhost:8080/api/capsules", formData, {
-                headers: {"Content-Type": "multipart/form-data"},
+                headers: {
+                    "Content-Type": "multipart/form-data",
+                    Authorization: `Bearer ${token}`
+                },
             });
 
             setStatusMessage("🎉 Capsule created successfully!");
@@ -46,23 +50,23 @@ const CreateCapsulePage = () => {
     return (
         <div className="capsule-container">
             <motion.div
-                className="form-card"
+                className="capsule-form-card"
                 initial={{opacity: 0, y: 20}}
                 animate={{opacity: 1, y: 0}}
                 transition={{duration: 0.5}}
             >
-                <h2>Create a New Time Capsule</h2>
+                <h2 className="capsule-title">Create a New Time Capsule</h2>
                 <form onSubmit={handleSubmit(onSubmit)} className="capsule-form">
-                    <div className="input-group">
+                    <div className="capsule-input-group">
                         <label>Title</label>
                         <input
                             type="text"
                             {...register("title", {required: "Title is required"})}
                         />
-                        {errors.title && <p className="error">{errors.title.message}</p>}
+                        {errors.title && <p className="capsule-error">{errors.title.message}</p>}
                     </div>
 
-                    <div className="input-group">
+                    <div className="capsule-input-group">
                         <label>Type</label>
                         <select {...register("type")}>
                             <option value="text">Text</option>
@@ -72,7 +76,7 @@ const CreateCapsulePage = () => {
                     </div>
 
                     {capsuleType === "text" && (
-                        <div className="input-group">
+                        <div className="capsule-input-group">
                             <label>Message</label>
                             <textarea
                                 rows={5}
@@ -80,26 +84,30 @@ const CreateCapsulePage = () => {
                                     required: "Message is required for text capsules",
                                 })}
                             />
-                            {errors.message && <p className="error">{errors.message.message}</p>}
+                            {errors.message && (
+                                <p className="capsule-error">{errors.message.message}</p>
+                            )}
                         </div>
                     )}
 
                     {(capsuleType === "image" || capsuleType === "video") && (
-                        <div className="input-group">
+                        <div className="capsule-input-group">
                             <label>{capsuleType === "image" ? "Upload Image" : "Upload Video"}</label>
                             <input
                                 type="file"
                                 accept={capsuleType === "image" ? "image/*" : "video/*"}
                                 {...register("file", {required: "File is required"})}
                             />
-                            {errors.file && <p className="error">{errors.file.message}</p>}
+                            {errors.file && <p className="capsule-error">{errors.file.message}</p>}
                         </div>
                     )}
 
-                    <button type="submit" className="btn">📦 Create Capsule</button>
+                    <button type="submit" className="capsule-btn">📦 Create Capsule</button>
                 </form>
 
-                {statusMessage && <p className="status-message">{statusMessage}</p>}
+                {statusMessage && (
+                    <p className="capsule-status-message">{statusMessage}</p>
+                )}
             </motion.div>
         </div>
     );
