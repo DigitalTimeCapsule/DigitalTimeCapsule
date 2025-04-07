@@ -3,7 +3,7 @@ import {Navigate} from "react-router-dom";
 import axios from "axios";
 
 const PrivateRoute = ({children}) => {
-    const [isValid, setIsValid] = useState(null); // null = loading, false = invalid, true = valid
+    const [isValid, setIsValid] = useState(null);
 
     useEffect(() => {
         const checkToken = async () => {
@@ -31,7 +31,7 @@ const PrivateRoute = ({children}) => {
     }, []);
 
     if (isValid === null) {
-        return <div>Loading...</div>; // Or a spinner
+        return <div>Loading...</div>;
     }
 
     return isValid ? children : <Navigate to="/login" replace/>;

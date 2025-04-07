@@ -8,16 +8,17 @@ const LoginForm = ({onToggle}) => {
     const navigate = useNavigate();
     const handleLogin = async (data) => {
         try {
-            await axios.post("http://localhost:8080/api/users/login", {
+            const response = await axios.post("http://localhost:8080/api/users/login", {
                 email: data.email,
                 password: data.password,
-            }).then((response) => {
-                const token = response.data;
-                localStorage.setItem("authToken", token); // or sessionStorage
-                alert("Login successful");
-                reset();
-                navigate("/capsule-manager");
             });
+
+            const token = response.data;
+            localStorage.setItem("authToken", token);
+
+            alert("Login successful");
+            reset();
+            navigate("/capsule-manager");
         } catch (error) {
             alert(error.response?.data?.message || "Login failed");
         }
