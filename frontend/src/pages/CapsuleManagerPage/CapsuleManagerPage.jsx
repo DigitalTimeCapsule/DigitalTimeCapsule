@@ -14,7 +14,12 @@ const CapsuleManagerPage = () => {
     useEffect(() => {
         const fetchUnopenedCapsules = async () => {
             try {
-                const response = await axios.get("https://localhost:8080/api/capsules");
+                const token = localStorage.getItem("authToken")
+                const response = await axios.get("https://localhost:8080/api/capsules", {
+                    headers: {
+                        Authorization: `Bearer ${token}`
+                    }
+                });
                 const opened = response.data.filter(capsule => capsule.opened).length;
                 const unopened = response.data.filter(capsule => !capsule.opened).length;
 
@@ -28,29 +33,27 @@ const CapsuleManagerPage = () => {
         fetchUnopenedCapsules();
     }, [numOfOpened]);
 
-    return (
-        <div className="capsule-manager-container">
-            <motion.div
-                className="capsule-manager-card"
-                initial={{opacity: 0, y: 20}}
-                animate={{opacity: 1, y: 0}}
-                transition={{duration: 0.5}}
-            >
-                <h2 className="capsule-manager-title">🎁 Capsule Manager</h2>
-                <div className="capsule-manager-options">
-                    <button onClick={() => navigate("/capsule/create")} className="capsule-manager-btn">
-                        <FiPlusCircle/><span>Create New Capsule</span>
-                    </button>
-                    <button onClick={() => navigate("/capsule/history")} className="capsule-manager-btn">
-                        <FcViewDetails/><span>View Older Capsules</span>{numOfOpened}
-                    </button>
-                    <button onClick={() => navigate("/capsule/open")} className="capsule-manager-btn">
-                        <FcUnlock/><span>Open Capsules</span>{numOfUnopened}
-                    </button>
-                </div>
-            </motion.div>
-        </div>
-    );
+    return (<div className="capsule-manager-container">
+        <motion.div
+            className="capsule-manager-card"
+            initial={{opacity: 0, y: 20}}
+            animate={{opacity: 1, y: 0}}
+            transition={{duration: 0.5}}
+        >
+            <h2 className="capsule-manager-title">🎁 Capsule Manager</h2>
+            <div className="capsule-manager-options">
+                <button onClick={() => navigate("/capsule/create")} className="capsule-manager-btn">
+                    <FiPlusCircle/><span>Create New Capsule</span>
+                </button>
+                <button onClick={() => navigate("/capsule/history")} className="capsule-manager-btn">
+                    <FcViewDetails/><span>View Older Capsules</span>{numOfOpened}
+                </button>
+                <button onClick={() => navigate("/capsule/open")} className="capsule-manager-btn">
+                    <FcUnlock/><span>Open Capsules</span>{numOfUnopened}
+                </button>
+            </div>
+        </motion.div>
+    </div>);
 };
 
 export default CapsuleManagerPage;
