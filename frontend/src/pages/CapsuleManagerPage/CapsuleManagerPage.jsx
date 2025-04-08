@@ -12,7 +12,7 @@ const CapsuleManagerPage = () => {
     const [numOfOpened, setNumOfOpened] = useState(3);
 
     useEffect(() => {
-        const fetchUnopenedCapsules = async () => {
+        const fetchCapsules = async () => {
             try {
                 const token = localStorage.getItem("authToken")
                 const response = await axios.get("https://localhost:8080/api/capsules", {
@@ -30,7 +30,7 @@ const CapsuleManagerPage = () => {
             }
         }
 
-        fetchUnopenedCapsules();
+        fetchCapsules();
     }, [numOfOpened]);
 
     return (<div className="capsule-manager-container">
