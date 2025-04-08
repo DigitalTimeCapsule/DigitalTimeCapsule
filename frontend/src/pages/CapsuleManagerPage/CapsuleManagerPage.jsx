@@ -8,8 +8,8 @@ import axios from "axios";
 
 const CapsuleManagerPage = () => {
     const navigate = useNavigate();
-    const [numOfUnopened, setNumOfUnopened] = useState(2);
-    const [numOfOpened, setNumOfOpened] = useState(3);
+    const [numOfUnopened, setNumOfUnopened] = useState(3);
+    const [numOfOpened, setNumOfOpened] = useState(2);
 
     useEffect(() => {
         const fetchCapsules = async () => {

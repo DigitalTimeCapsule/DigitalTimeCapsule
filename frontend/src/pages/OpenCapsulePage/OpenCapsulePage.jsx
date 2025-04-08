@@ -1,66 +1,99 @@
 import React, {useEffect, useState} from "react";
 import axios from "axios";
 import Modal from "react-modal";
-import "./CapsuleHistoryPage.css";
 import {useNavigate} from "react-router-dom";
+import "./OpenCapsulePage.css";
 
 Modal.setAppElement("#root");
 
-const CapsuleHistoryPage = () => {
+const OpenCapsulePage = () => {
     const [capsules, setCapsules] = useState([{
-        "id": 1,
-        "title": "My First Capsule",
-        "message": "Hello from the past!",
-        "imageUrls": ["https://picsum.photos/200"],
-        "videoUrls": ["https://picsum.photos/200"],
-        "fileUrls": ["https://picsum.photos/200"],
-        "openDate": new Date("2024-12-19T03:24:30"),
-    }, {
-        "id": 2,
-        "title": "My Second Capsule",
-        "message": "Hello from the past!",
-        "imageUrls": ["https://picsum.photos/200", "https://picsum.photos/200", "https://picsum.photos/200", "https://picsum.photos/200", "https://picsum.photos/200", "https://picsum.photos/200", "https://picsum.photos/200", "https://picsum.photos/200", "https://picsum.photos/200", "https://picsum.photos/200", "https://picsum.photos/200", "https://picsum.photos/200"],
-        "videoUrls": ["https://picsum.photos/200"],
-        "fileUrls": ["https://picsum.photos/200"],
-        "openDate": new Date("2023-12-19T03:24:30"),
-    }]);
+        id: 1,
+        title: "Graduation Message",
+        message: "Congratulations! You've made it to the end!",
+        imageUrls: ["https://picsum.photos/200?random=1"],
+        videoUrls: ["https://www.w3schools.com/html/mov_bbb.mp4"],
+        fileUrls: ["https://www.orimi.com/pdf-test.pdf"],
+        openDate: "2024-12-25T10:00:00"
+    },
+        {
+            id: 2,
+            title: "Time Capsule from 2022",
+            message: "I hope you're doing well and following your dreams.",
+            imageUrls: [
+                "https://picsum.photos/200?random=2",
+                "https://picsum.photos/200?random=3"
+            ],
+            videoUrls: [],
+            fileUrls: [],
+            openDate: "2027-06-10T09:30:00"
+        },
+        {
+            id: 3,
+            title: "Dream Journal",
+            message: "Here are the things I wanted to achieve in 5 years.",
+            imageUrls: [],
+            videoUrls: [],
+            fileUrls: [
+                "https://file-examples.com/storage/fed137caae12a9ea6a4b5e6/2017/10/file-sample_150kB.pdf"
+            ],
+            openDate: "2026-05-15T14:00:00"
+        }]);
     const [selectedCapsule, setSelectedCapsule] = useState(null);
     const navigate = useNavigate();
 
     useEffect(() => {
-        const fetchOpenedCapsules = async () => {
+        const fetchUnopenedCapsules = async () => {
             try {
                 const token = localStorage.getItem("authToken");
-                const response = await axios.get("http://localhost:8080/api/capsules/opened", {
+                const response = await axios.get("http://localhost:8080/api/capsules/unopened", {
                     headers: {
                         Authorization: `Bearer ${token}`
                     }
                 });
                 setCapsules(response.data);
             } catch (error) {
-                console.error("Failed to fetch capsules:", error);
+                console.error("Failed to fetch unopened capsules:", error);
             }
         };
 
-        fetchOpenedCapsules();
-    }, []);
+        fetchUnopenedCapsules();
+    }, [capsules]);
 
     return (
-        <div className="capsule-history-page-container">
+        <div className="capsule-open-page-container">
             <button className="return-btn" onClick={() => navigate("/capsule-manager")}>
                 ⬅️ Return to Capsule Manager
             </button>
-            <h2>📜 Capsule History</h2>
+            <h2>🔒 Open Capsules</h2>
             <div className="capsule-list">
-                {capsules.map((capsule) => (
-                    <div
-                        key={capsule.id}
-                        className="capsule-card"
-                        onClick={() => setSelectedCapsule(capsule)}
-                    >
-                        <h3>{capsule.title}</h3>
-                    </div>
-                ))}
+                {capsules.map((capsule) => {
+                    const isLocked = new Date(capsule.openDate) > new Date();
+
+                    return (
+                        <div
+                            key={capsule.id}
+                            className={`capsule-card ${isLocked ? 'locked' : ''}`}
+                            onClick={() => {
+                                if (!isLocked) {
+                                    setSelectedCapsule(capsule);
+
+                                    const token = localStorage.getItem("authToken");
+                                    axios.put(`http://localhost:8080/api/capsules/${capsule.id}/mark-opened`, {}, {
+                                        headers: {Authorization: `Bearer ${token}`}
+                                    }).then(() => {
+                                        setCapsules((prev) => prev.filter((c) => c.id !== capsule.id));
+                                    }).catch((err) => console.error("Failed to mark capsule as opened:", err));
+                                }
+                            }}
+                            style={{cursor: isLocked ? "not-allowed" : "pointer", opacity: isLocked ? 0.6 : 1}}
+                        >
+                            <h3>{capsule.title}</h3>
+                            <p>Opens on: {new Date(capsule.openDate).toLocaleDateString()}</p>
+                            {isLocked && <p style={{color: "#d00"}}>🔒 Locked</p>}
+                        </div>
+                    );
+                })}
             </div>
 
             <Modal
@@ -125,4 +158,4 @@ const CapsuleHistoryPage = () => {
     );
 };
 
-export default CapsuleHistoryPage;
+export default OpenCapsulePage;
