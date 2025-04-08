@@ -3,10 +3,12 @@ import {useForm} from "react-hook-form";
 import axios from "axios";
 import {motion} from "framer-motion";
 import "./CreateCapsulePage.css";
+import {useNavigate} from "react-router-dom";
 
 const CreateCapsulePage = () => {
     const {register, handleSubmit, reset, formState: {errors}} = useForm();
     const [statusMessage, setStatusMessage] = useState("");
+    const navigate = useNavigate();
 
     const [imageFiles, setImageFiles] = useState([]);
     const [videoFiles, setVideoFiles] = useState([]);
@@ -67,12 +69,16 @@ const CreateCapsulePage = () => {
 
     return (
         <div className="capsule-container">
+            <button className="return-btn" onClick={() => navigate("/capsule-manager")}>
+                ⬅️ Return to Capsule Manager
+            </button>
             <motion.div
                 className="capsule-form-card"
                 initial={{opacity: 0, y: 20}}
                 animate={{opacity: 1, y: 0}}
                 transition={{duration: 0.5}}
             >
+
                 <h2 className="capsule-title">Create a New Time Capsule</h2>
                 <form onSubmit={handleSubmit(onSubmit)} className="capsule-form">
                     <div className="capsule-input-group">

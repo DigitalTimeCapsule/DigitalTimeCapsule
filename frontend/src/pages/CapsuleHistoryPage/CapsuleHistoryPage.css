@@ -1,0 +1,71 @@
+.capsule-history-page-container {
+    padding: 100px;
+    min-height: 100vh;
+}
+
+.capsule-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 16px;
+}
+
+.capsule-card {
+    background: #f2f2f2;
+    padding: 16px;
+    border-radius: 12px;
+    cursor: pointer;
+    transition: background 0.3s ease;
+    width: 200px;
+}
+
+.capsule-card:hover {
+    background: #e0e0e0;
+}
+
+.capsule-modal-overlay {
+    background: rgba(0, 0, 0, 0.6);
+    position: fixed;
+    inset: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.capsule-modal {
+    background: white;
+    padding: 24px;
+    border-radius: 16px;
+    max-height: 90vh;
+    width: 90%;
+    max-width: 800px;
+    overflow-y: auto;
+}
+
+.media-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+.media-row img,
+.media-row video {
+    max-height: 150px;
+    border-radius: 8px;
+}
+
+.return-btn {
+    position: absolute;
+    top: 20px;
+    left: 20px;
+    padding: 8px 14px;
+    font-size: 14px;
+    background-color: #eeeeee;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background 0.2s ease;
+}
+
+.return-btn:hover {
+    background-color: #dddddd;
+}

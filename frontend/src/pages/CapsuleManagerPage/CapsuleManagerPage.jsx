@@ -1,12 +1,32 @@
-import React from "react";
+import React, {useEffect, useState} from "react";
 import {useNavigate} from "react-router-dom";
 import {motion} from "framer-motion";
 import "./CapsuleManagerPage.css";
 import {FiPlusCircle} from "react-icons/fi";
 import {FcViewDetails, FcUnlock} from "react-icons/fc";
+import axios from "axios";
 
 const CapsuleManagerPage = () => {
     const navigate = useNavigate();
+    const [numOfUnopened, setNumOfUnopened] = useState(2);
+    const [numOfOpened, setNumOfOpened] = useState(3);
+
+    useEffect(() => {
+        const fetchUnopenedCapsules = async () => {
+            try {
+                const response = await axios.get("https://localhost:8080/api/capsules");
+                const opened = response.data.filter(capsule => capsule.opened).length;
+                const unopened = response.data.filter(capsule => !capsule.opened).length;
+
+                setNumOfOpened(opened);
+                setNumOfUnopened(unopened);
+            } catch (error) {
+                console.error("Fetch Unopened Capsules Error: ", error);
+            }
+        }
+
+        fetchUnopenedCapsules();
+    }, [numOfOpened]);
 
     return (
         <div className="capsule-manager-container">
@@ -22,10 +42,10 @@ const CapsuleManagerPage = () => {
                         <FiPlusCircle/><span>Create New Capsule</span>
                     </button>
                     <button onClick={() => navigate("/capsule/history")} className="capsule-manager-btn">
-                        <FcViewDetails/><span>View Older Capsules</span>
+                        <FcViewDetails/><span>View Older Capsules</span>{numOfOpened}
                     </button>
                     <button onClick={() => navigate("/capsule/open")} className="capsule-manager-btn">
-                        <FcUnlock/><span>Open Capsule</span>
+                        <FcUnlock/><span>Open Capsules</span>{numOfUnopened}
                     </button>
                 </div>
             </motion.div>
