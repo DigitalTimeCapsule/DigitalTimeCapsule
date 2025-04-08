@@ -5,9 +5,17 @@ import {motion} from "framer-motion";
 import "./CreateCapsulePage.css";
 
 const CreateCapsulePage = () => {
-    const {register, handleSubmit, reset, watch, formState: {errors}} = useForm();
+    const {register, handleSubmit, reset, formState: {errors}} = useForm();
     const [statusMessage, setStatusMessage] = useState("");
-    const capsuleType = watch("type", "text");
+
+    const [imageFiles, setImageFiles] = useState([]);
+    const [videoFiles, setVideoFiles] = useState([]);
+    const [otherFiles, setOtherFiles] = useState([]);
+
+    const handleFileChange = (e, setter, currentFiles) => {
+        const newFiles = Array.from(e.target.files);
+        setter([...currentFiles, ...newFiles]);
+    };
 
     const onSubmit = async (data) => {
         const currentDate = new Date();
@@ -16,19 +24,15 @@ const CreateCapsulePage = () => {
 
         const formData = new FormData();
         formData.append("title", data.title);
-        formData.append("type", data.type);
         formData.append("openDate", openDate.toISOString());
 
-        if (data.type === "text") {
+        if (data.message) {
             formData.append("message", data.message);
-        } else if (data.type === "image" || data.type === "video") {
-            if (data.file[0]) {
-                formData.append("file", data.file[0]);
-            } else {
-                setStatusMessage("❌ Please upload a file.");
-                return;
-            }
         }
+
+        imageFiles.forEach((file) => formData.append("images", file));
+        videoFiles.forEach((file) => formData.append("videos", file));
+        otherFiles.forEach((file) => formData.append("files", file));
 
         try {
             const token = localStorage.getItem("authToken");
@@ -41,11 +45,25 @@ const CreateCapsulePage = () => {
 
             setStatusMessage("🎉 Capsule created successfully!");
             reset();
+            setImageFiles([]);
+            setVideoFiles([]);
+            setOtherFiles([]);
         } catch (error) {
             setStatusMessage("❌ Failed to create capsule. Please try again.");
             console.error(error);
         }
     };
+
+    const removeFile = (index, fileType) => {
+        if (fileType === "images") {
+            setImageFiles(imageFiles.filter((_, i) => i !== index));
+        } else if (fileType === "videos") {
+            setVideoFiles(videoFiles.filter((_, i) => i !== index));
+        } else if (fileType === "files") {
+            setOtherFiles(otherFiles.filter((_, i) => i !== index));
+        }
+    };
+
 
     return (
         <div className="capsule-container">
@@ -67,40 +85,64 @@ const CreateCapsulePage = () => {
                     </div>
 
                     <div className="capsule-input-group">
-                        <label>Type</label>
-                        <select {...register("type")}>
-                            <option value="text">Text</option>
-                            <option value="image">Image</option>
-                            <option value="video">Video</option>
-                        </select>
+                        <label>Message (Optional)</label>
+                        <textarea
+                            rows={5}
+                            {...register("message")}
+                            placeholder="Write a message..."
+                        />
                     </div>
 
-                    {capsuleType === "text" && (
-                        <div className="capsule-input-group">
-                            <label>Message</label>
-                            <textarea
-                                rows={5}
-                                {...register("message", {
-                                    required: "Message is required for text capsules",
-                                })}
-                            />
-                            {errors.message && (
-                                <p className="capsule-error">{errors.message.message}</p>
-                            )}
-                        </div>
-                    )}
+                    <div className="capsule-input-group">
+                        <label>Add Image(s)</label>
+                        <input
+                            type="file"
+                            accept="image/*"
+                            onChange={(e) => handleFileChange(e, setImageFiles, imageFiles)}
+                        />
+                        <ul>
+                            {imageFiles.map((file, i) => (
+                                <li key={i}>
+                                    {file.name}
+                                    <button type="button" onClick={() => removeFile(i, "images")}>❌</button>
+                                </li>
+                            ))}
+                        </ul>
+                    </div>
 
-                    {(capsuleType === "image" || capsuleType === "video") && (
-                        <div className="capsule-input-group">
-                            <label>{capsuleType === "image" ? "Upload Image" : "Upload Video"}</label>
-                            <input
-                                type="file"
-                                accept={capsuleType === "image" ? "image/*" : "video/*"}
-                                {...register("file", {required: "File is required"})}
-                            />
-                            {errors.file && <p className="capsule-error">{errors.file.message}</p>}
-                        </div>
-                    )}
+                    <div className="capsule-input-group">
+                        <label>Add Video(s)</label>
+                        <input
+                            type="file"
+                            accept="video/*"
+                            onChange={(e) => handleFileChange(e, setVideoFiles, videoFiles)}
+                        />
+                        <ul>
+                            {videoFiles.map((file, i) => (
+                                <li key={i}>
+                                    {file.name}
+                                    <button type="button" onClick={() => removeFile(i, "videos")}>❌</button>
+                                </li>
+                            ))}
+                        </ul>
+                    </div>
+
+                    <div className="capsule-input-group">
+                        <label>Add File(s)</label>
+                        <input
+                            type="file"
+                            accept=".pdf,.doc,.docx,.ppt,.pptx,.xls,.xlsx,.txt"
+                            onChange={(e) => handleFileChange(e, setOtherFiles, otherFiles)}
+                        />
+                        <ul>
+                            {otherFiles.map((file, i) => (
+                                <li key={i}>
+                                    {file.name}
+                                    <button type="button" onClick={() => removeFile(i, "files")}>❌</button>
+                                </li>
+                            ))}
+                        </ul>
+                    </div>
 
                     <button type="submit" className="capsule-btn">📦 Create Capsule</button>
                 </form>
