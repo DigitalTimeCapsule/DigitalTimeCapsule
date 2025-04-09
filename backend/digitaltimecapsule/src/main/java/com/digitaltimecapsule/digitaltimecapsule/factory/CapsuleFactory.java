@@ -1,25 +1,29 @@
-@Component
-public class CapsuleFactory {
-    public Capsule createTextCapsule(String name, String data, LocalDateTime expiryDate) {
-        return CapsuleBuilder.builder()
-                .name(name)
-                .type("Text")
-                .data(data)
-                .expiryDate(expiryDate)
-                .opened(false)
-                .build();
-    }
-}
+package com.digitaltimecapsule.digitaltimecapsule.factory;
+
+import com.digitaltimecapsule.digitaltimecapsule.builder.CapsuleBuilder;
+import com.digitaltimecapsule.digitaltimecapsule.model.Capsule;
+
+import java.time.LocalDateTime;
 
 public class CapsuleFactory {
-    public Capsule createVideoCapsule(String name, String fileName, LocalDateTime expiryDate) {
-        return CapsuleBuilder.builder()
-                .name(name)
-                .type("Video")
-                .data(data)
-                .expiryDate(expiryDate)
-                .opened(false)
+
+    public static Capsule createTextCapsule(String name, String textContent, LocalDateTime expiry) {
+        return new CapsuleBuilder()
+                .setName(name)
+                .setExpiryDateTime(expiry)
+                .addCapsuleData("text", textContent)
                 .build();
     }
-}
 
+    public static Capsule createFileCapsule(String name, String filePath, String type, LocalDateTime expiry) {
+        return new CapsuleBuilder()
+                .setName(name)
+                .setExpiryDateTime(expiry)
+                .addCapsuleData(type, filePath)
+                .build();
+    }
+
+    public static CapsuleBuilder getBuilder() {
+        return new CapsuleBuilder();
+    }
+}

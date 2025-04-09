@@ -1,3 +1,11 @@
+package com.digitaltimecapsule.digitaltimecapsule.model;
+
+import jakarta.persistence.*;
+
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
+
 @Entity
 public class Capsule {
     @Id
@@ -5,10 +13,14 @@ public class Capsule {
     private Long id;
 
     private String name;
-    private String data;
-    private LocalDateTime expiryDate;
+    private LocalDateTime expiryDateTime;
 
     private boolean opened;
+
+    @OneToMany(mappedBy = "capsule", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<CapsuleData> capsuleDataList = new ArrayList<>();
+
+    // Getters, setters
 
     public String getName() {
         return name;
@@ -18,20 +30,21 @@ public class Capsule {
         this.name = name;
     }
 
-    public String getData() {
-        return data;
+
+    public LocalDateTime getExpiryDateTime() {
+        return expiryDateTime;
     }
 
-    public void setData(String data) {
-        this.data = data;
+    public void setExpiryDateTime(LocalDateTime expiryDateTime) {
+        this.expiryDateTime = expiryDateTime;
     }
 
-    public LocalDateTime getExpiryDate() {
-        return expiryDate;
+    public List<CapsuleData> getCapsuleDataList() {
+        return capsuleDataList;
     }
 
-    public void setExpiryDate(LocalDateTime expiryDate) {
-        this.expiryDate = expiryDate;
+    public void setCapsuleDataList(List<CapsuleData> capsuleDataList) {
+        this.capsuleDataList = capsuleDataList;
     }
 
     public boolean isOpened() {
