@@ -14,19 +14,20 @@ const CreateCapsulePage = () => {
     const [videoFiles, setVideoFiles] = useState([]);
     const [otherFiles, setOtherFiles] = useState([]);
 
+    let today = new Date();
+    today.setDate(today.getDate() + 1);
+    const tomorrow = today.toISOString().slice(0, 16)
+
     const handleFileChange = (e, setter, currentFiles) => {
         const newFiles = Array.from(e.target.files);
         setter([...currentFiles, ...newFiles]);
     };
 
     const onSubmit = async (data) => {
-        const currentDate = new Date();
-        const openDate = new Date(currentDate);
-        openDate.setFullYear(currentDate.getFullYear() + 5);
 
         const formData = new FormData();
         formData.append("title", data.title);
-        formData.append("openDate", openDate.toISOString());
+        formData.append("expiryDate", data.expiryDate);
 
         if (data.message) {
             formData.append("message", data.message);
@@ -148,6 +149,16 @@ const CreateCapsulePage = () => {
                                 </li>
                             ))}
                         </ul>
+                    </div>
+
+
+                    <div className="capsule-input-group">
+                        <label>Expiry Date</label>
+                        <input
+                            type="datetime-local"
+                            min={tomorrow}
+                            {...register("expiryDate", {required: "Expiry Date is required"})}
+                        />
                     </div>
 
                     <button type="submit" className="capsule-btn">📦 Create Capsule</button>

@@ -14,7 +14,7 @@ const OpenCapsulePage = () => {
         imageUrls: ["https://picsum.photos/200?random=1"],
         videoUrls: ["https://www.w3schools.com/html/mov_bbb.mp4"],
         fileUrls: ["https://www.orimi.com/pdf-test.pdf"],
-        openDate: "2024-12-25T10:00:00"
+        expiryDate: "2024-12-25T10:00:00"
     },
         {
             id: 2,
@@ -26,7 +26,7 @@ const OpenCapsulePage = () => {
             ],
             videoUrls: [],
             fileUrls: [],
-            openDate: "2027-06-10T09:30:00"
+            expiryDate: "2027-06-10T09:30:00"
         },
         {
             id: 3,
@@ -37,7 +37,7 @@ const OpenCapsulePage = () => {
             fileUrls: [
                 "https://file-examples.com/storage/fed137caae12a9ea6a4b5e6/2017/10/file-sample_150kB.pdf"
             ],
-            openDate: "2026-05-15T14:00:00"
+            expiryDate: "2026-05-15T14:00:00"
         }]);
     const [selectedCapsule, setSelectedCapsule] = useState(null);
     const navigate = useNavigate();
@@ -68,7 +68,7 @@ const OpenCapsulePage = () => {
             <h2>🔒 Open Capsules</h2>
             <div className="capsule-list">
                 {capsules.map((capsule) => {
-                    const isLocked = new Date(capsule.openDate) > new Date();
+                    const isLocked = new Date(capsule.expiryDate) > new Date();
 
                     return (
                         <div
@@ -89,7 +89,7 @@ const OpenCapsulePage = () => {
                             style={{cursor: isLocked ? "not-allowed" : "pointer", opacity: isLocked ? 0.6 : 1}}
                         >
                             <h3>{capsule.title}</h3>
-                            <p>Opens on: {new Date(capsule.openDate).toLocaleDateString()}</p>
+                            <p>Opens on: {new Date(capsule.expiryDate).toLocaleDateString()}</p>
                             {isLocked && <p style={{color: "#d00"}}>🔒 Locked</p>}
                         </div>
                     );

@@ -14,7 +14,7 @@ const CapsuleHistoryPage = () => {
         "imageUrls": ["https://picsum.photos/200"],
         "videoUrls": ["https://picsum.photos/200"],
         "fileUrls": ["https://picsum.photos/200"],
-        "openDate": new Date("2024-12-19T03:24:30"),
+        "expiryDate": new Date("2024-12-19T03:24:30"),
     }, {
         "id": 2,
         "title": "My Second Capsule",
@@ -22,7 +22,7 @@ const CapsuleHistoryPage = () => {
         "imageUrls": ["https://picsum.photos/200", "https://picsum.photos/200", "https://picsum.photos/200", "https://picsum.photos/200", "https://picsum.photos/200", "https://picsum.photos/200", "https://picsum.photos/200", "https://picsum.photos/200", "https://picsum.photos/200", "https://picsum.photos/200", "https://picsum.photos/200", "https://picsum.photos/200"],
         "videoUrls": ["https://picsum.photos/200"],
         "fileUrls": ["https://picsum.photos/200"],
-        "openDate": new Date("2023-12-19T03:24:30"),
+        "expiryDate": new Date("2023-12-19T03:24:30"),
     }]);
     const [selectedCapsule, setSelectedCapsule] = useState(null);
     const navigate = useNavigate();
