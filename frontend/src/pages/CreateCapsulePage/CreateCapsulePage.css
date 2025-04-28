@@ -1,0 +1,118 @@
+.capsule-container {
+    min-height: 100vh;
+    width: 100vw;
+    background: linear-gradient(to top right, #eef2f7, #dbeafe);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 2rem;
+}
+
+.capsule-form-card {
+    background: white;
+    padding: 2rem;
+    border-radius: 1rem;
+    max-width: 550px;
+    width: 100%;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+}
+
+.capsule-title {
+    margin-bottom: 1.5rem;
+    text-align: center;
+    font-size: 1.8rem;
+    color: #333;
+}
+
+.capsule-input-group {
+    margin-bottom: 1.2rem;
+}
+
+.capsule-input-group label {
+    display: block;
+    margin-bottom: 0.5rem;
+    font-weight: 600;
+    color: #222;
+}
+
+.capsule-input-group input,
+.capsule-input-group textarea,
+.capsule-input-group select {
+    width: 100%;
+    padding: 0.75rem;
+    border: 1px solid #ccc;
+    border-radius: 0.5rem;
+    font-size: 1rem;
+    background-color: #fff;
+    transition: border 0.2s ease;
+}
+
+.capsule-input-group input:focus,
+.capsule-input-group textarea:focus,
+.capsule-input-group select:focus {
+    outline: none;
+    border-color: #0077ff;
+}
+
+.capsule-input-group textarea {
+    resize: vertical;
+    min-height: 100px;
+}
+
+.capsule-input-group input[type="file"] {
+    padding: 0.5rem;
+    background-color: #f9f9f9;
+    border: 1px dashed #bbb;
+    cursor: pointer;
+}
+
+.capsule-btn {
+    width: 100%;
+    padding: 0.9rem;
+    font-size: 1.05rem;
+    background: #0077ff;
+    color: white;
+    border: none;
+    border-radius: 0.6rem;
+    cursor: pointer;
+    transition: background 0.3s ease;
+}
+
+.capsule-btn:hover {
+    background: #005fd1;
+}
+
+.capsule-error {
+    color: red;
+    font-size: 0.9rem;
+    margin-top: 0.3rem;
+}
+
+.capsule-status-message {
+    margin-top: 1.2rem;
+    text-align: center;
+    font-weight: 600;
+    font-size: 1rem;
+    color: #444;
+}
+
+.capsule-input-group ul {
+    list-style: none;
+    padding-left: 0;
+}
+
+.capsule-input-group ul li {
+    margin: 4px 0;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.capsule-input-group ul li button {
+    background: none;
+    border: none;
+    color: red;
+    cursor: pointer;
+    font-size: 16px;
+}
+

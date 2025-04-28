@@ -1,0 +1,128 @@
+import React, {useEffect, useState} from "react";
+import axios from "axios";
+import Modal from "react-modal";
+import "./CapsuleHistoryPage.css";
+import {useNavigate} from "react-router-dom";
+
+Modal.setAppElement("#root");
+
+const CapsuleHistoryPage = () => {
+    const [capsules, setCapsules] = useState([{
+        "id": 1,
+        "title": "My First Capsule",
+        "message": "Hello from the past!",
+        "imageUrls": ["https://picsum.photos/200"],
+        "videoUrls": ["https://picsum.photos/200"],
+        "fileUrls": ["https://picsum.photos/200"],
+        "expiryDate": new Date("2024-12-19T03:24:30"),
+    }, {
+        "id": 2,
+        "title": "My Second Capsule",
+        "message": "Hello from the past!",
+        "imageUrls": ["https://picsum.photos/200", "https://picsum.photos/200", "https://picsum.photos/200", "https://picsum.photos/200", "https://picsum.photos/200", "https://picsum.photos/200", "https://picsum.photos/200", "https://picsum.photos/200", "https://picsum.photos/200", "https://picsum.photos/200", "https://picsum.photos/200", "https://picsum.photos/200"],
+        "videoUrls": ["https://picsum.photos/200"],
+        "fileUrls": ["https://picsum.photos/200"],
+        "expiryDate": new Date("2023-12-19T03:24:30"),
+    }]);
+    const [selectedCapsule, setSelectedCapsule] = useState(null);
+    const navigate = useNavigate();
+
+    useEffect(() => {
+        const fetchOpenedCapsules = async () => {
+            try {
+                const token = localStorage.getItem("authToken");
+                const response = await axios.get("http://localhost:8080/api/capsules/opened", {
+                    headers: {
+                        Authorization: `Bearer ${token}`
+                    }
+                });
+                setCapsules(response.data);
+            } catch (error) {
+                console.error("Failed to fetch capsules:", error);
+            }
+        };
+
+        fetchOpenedCapsules();
+    }, []);
+
+    return (
+        <div className="capsule-history-page-container">
+            <button className="return-btn" onClick={() => navigate("/capsule-manager")}>
+                ⬅️ Return to Capsule Manager
+            </button>
+            <h2>📜 Capsule History</h2>
+            <div className="capsule-list">
+                {capsules.map((capsule) => (
+                    <div
+                        key={capsule.id}
+                        className="capsule-card"
+                        onClick={() => setSelectedCapsule(capsule)}
+                    >
+                        <h3>{capsule.title}</h3>
+                    </div>
+                ))}
+            </div>
+
+            <Modal
+                isOpen={!!selectedCapsule}
+                onRequestClose={() => setSelectedCapsule(null)}
+                contentLabel="Capsule Details"
+                className="capsule-modal"
+                overlayClassName="capsule-modal-overlay"
+            >
+                {selectedCapsule && (
+                    <div className="capsule-modal-content">
+                        <h2>{selectedCapsule.title}</h2>
+
+                        {selectedCapsule.message && (
+                            <>
+                                <h4>📩 Message</h4>
+                                <p>{selectedCapsule.message}</p>
+                            </>
+                        )}
+
+                        {selectedCapsule.imageUrls?.length > 0 && (
+                            <>
+                                <h4>🖼️ Images</h4>
+                                <div className="media-row">
+                                    {selectedCapsule.imageUrls.map((url, i) => (
+                                        <img key={i} src={url} alt={`img-${i}`}/>
+                                    ))}
+                                </div>
+                            </>
+                        )}
+
+                        {selectedCapsule.videoUrls?.length > 0 && (
+                            <>
+                                <h4>🎥 Videos</h4>
+                                <div className="media-row">
+                                    {selectedCapsule.videoUrls.map((url, i) => (
+                                        <video key={i} controls width="250">
+                                            <source src={url} type="video/mp4"/>
+                                        </video>
+                                    ))}
+                                </div>
+                            </>
+                        )}
+
+                        {selectedCapsule.fileUrls?.length > 0 && (
+                            <>
+                                <h4>📎 Files</h4>
+                                <ul>
+                                    {selectedCapsule.fileUrls.map((url, i) => (
+                                        <li key={i}><a href={url} target="_blank" rel="noreferrer">Download
+                                            File {i + 1}</a></li>
+                                    ))}
+                                </ul>
+                            </>
+                        )}
+
+                        <button onClick={() => setSelectedCapsule(null)}>❌ Close</button>
+                    </div>
+                )}
+            </Modal>
+        </div>
+    );
+};
+
+export default CapsuleHistoryPage;
