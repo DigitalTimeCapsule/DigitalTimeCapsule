@@ -5,6 +5,8 @@ on:
     branches: [ main, feature/* ]
     paths:
       - 'frontend/**'
+    paths-ignore:
+    - 'backend/**'
   pull_request:
     branches: [ main, feature/* ]
     paths:
