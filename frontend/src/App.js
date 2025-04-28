@@ -5,6 +5,8 @@ import HomePage from "./pages/HomePage/HomePage";
 import CreateCapsulePage from "./pages/CreateCapsulePage/CreateCapsulePage";
 import CapsuleManagerPage from "./pages/CapsuleManagerPage/CapsuleManagerPage";
 import PrivateRoute from "./components/PrivateRoute";
+import CapsuleHistoryPage from "./pages/CapsuleHistoryPage/CapsuleHistoryPage";
+import OpenCapsulePage from "./pages/OpenCapsulePage/OpenCapsulePage";
 
 function App() {
     return (
@@ -21,6 +23,18 @@ function App() {
                 <Route path="/capsule/create" element={
                     <PrivateRoute>
                         <CreateCapsulePage/>
+                    </PrivateRoute>
+                }/>
+
+                <Route path="/capsule/history" element={
+                    <PrivateRoute>
+                        <CapsuleHistoryPage/>
+                    </PrivateRoute>
+                }/>
+
+                <Route path="/capsule/open" element={
+                    <PrivateRoute>
+                        <OpenCapsulePage/>
                     </PrivateRoute>
                 }/>
             </Routes>

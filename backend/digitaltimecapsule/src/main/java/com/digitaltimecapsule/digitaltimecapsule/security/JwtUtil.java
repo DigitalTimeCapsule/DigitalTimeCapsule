@@ -10,8 +10,8 @@ import java.util.Date;
 @Component
 public class JwtUtil {
 
-    private static final String SECRET = "MySuperSecretKeyThatIsAtLeast32CharactersLong!"; // 🔐 Must be 256-bit for HS256
-    private static final long EXPIRATION = 1000 * 60 * 60 * 5; // 5 hours
+    private static final String SECRET = "MySuperSecretKeyThatIsAtLeast32CharactersLong!";
+    private static final long EXPIRATION = 1000 * 60 * 60 * 5;
 
     private final Key key = Keys.hmacShaKeyFor(SECRET.getBytes());
 

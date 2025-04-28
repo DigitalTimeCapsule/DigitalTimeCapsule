@@ -3,14 +3,20 @@ import {useForm} from "react-hook-form";
 import axios from "axios";
 import {motion} from "framer-motion";
 import "./CreateCapsulePage.css";
+import {useNavigate} from "react-router-dom";
 
 const CreateCapsulePage = () => {
     const {register, handleSubmit, reset, formState: {errors}} = useForm();
     const [statusMessage, setStatusMessage] = useState("");
+    const navigate = useNavigate();
 
     const [imageFiles, setImageFiles] = useState([]);
     const [videoFiles, setVideoFiles] = useState([]);
     const [otherFiles, setOtherFiles] = useState([]);
+
+    let today = new Date();
+    today.setDate(today.getDate() + 1);
+    const tomorrow = today.toISOString().slice(0, 16)
 
     const handleFileChange = (e, setter, currentFiles) => {
         const newFiles = Array.from(e.target.files);
@@ -18,13 +24,10 @@ const CreateCapsulePage = () => {
     };
 
     const onSubmit = async (data) => {
-        const currentDate = new Date();
-        const openDate = new Date(currentDate);
-        openDate.setFullYear(currentDate.getFullYear() + 5);
 
         const formData = new FormData();
         formData.append("title", data.title);
-        formData.append("openDate", openDate.toISOString());
+        formData.append("expiryDate", data.expiryDate);
 
         if (data.message) {
             formData.append("message", data.message);
@@ -67,12 +70,16 @@ const CreateCapsulePage = () => {
 
     return (
         <div className="capsule-container">
+            <button className="return-btn" onClick={() => navigate("/capsule-manager")}>
+                ⬅️ Return to Capsule Manager
+            </button>
             <motion.div
                 className="capsule-form-card"
                 initial={{opacity: 0, y: 20}}
                 animate={{opacity: 1, y: 0}}
                 transition={{duration: 0.5}}
             >
+
                 <h2 className="capsule-title">Create a New Time Capsule</h2>
                 <form onSubmit={handleSubmit(onSubmit)} className="capsule-form">
                     <div className="capsule-input-group">
@@ -142,6 +149,16 @@ const CreateCapsulePage = () => {
                                 </li>
                             ))}
                         </ul>
+                    </div>
+
+
+                    <div className="capsule-input-group">
+                        <label>Expiry Date</label>
+                        <input
+                            type="datetime-local"
+                            min={tomorrow}
+                            {...register("expiryDate", {required: "Expiry Date is required"})}
+                        />
                     </div>
 
                     <button type="submit" className="capsule-btn">📦 Create Capsule</button>
