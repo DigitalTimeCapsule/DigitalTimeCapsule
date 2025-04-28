@@ -16,14 +16,12 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
-<<<<<<< HEAD
             .csrf(csrf -> csrf.disable())  // Disable CSRF for testing (Enable for production)
             .cors(cors -> cors.configurationSource(corsConfigurationSource())) // Apply CORS settings
             .authorizeHttpRequests(auth -> auth
                     .requestMatchers("/api/users/**", "/api/capsules/**").permitAll() // Allow all requests for /api/users/*
                 .anyRequest().authenticated()  // Require authentication for other requests
             );
-=======
                 .csrf(csrf -> csrf.disable())
                 .cors(cors -> cors.configurationSource(corsConfigurationSource()))
                 .authorizeHttpRequests(auth -> auth
@@ -31,8 +29,6 @@ public class SecurityConfig {
                         .anyRequest().authenticated()
                 )
                 .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
->>>>>>> origin/unstable
-
         return http.build();
     }
 
