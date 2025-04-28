@@ -5,10 +5,14 @@ on:
     branches: [ main, feature/* ]
     paths:
       - 'backend/**'
+    paths-ignore:
+    - 'frontend/**'
   pull_request:
     branches: [ main, feature/* ]
     paths:
       - 'backend/**'
+    paths-ignore:
+    - 'frontend/**'
   workflow_dispatch:
 
 jobs:
