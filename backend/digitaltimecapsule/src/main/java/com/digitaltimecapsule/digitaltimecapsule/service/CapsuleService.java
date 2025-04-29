@@ -17,6 +17,8 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
+import java.util.HashMap;
+import java.util.Map;
 
 @Service
 public class CapsuleService {
@@ -26,6 +28,10 @@ public class CapsuleService {
 
     @Autowired
     private CapsuleRepository capsuleRepository;
+
+    public List<Capsule> getAllCapsules() {
+        return capsuleRepository.findAll();
+    }
 
     public void createCapsule(String title, String message, LocalDateTime openDate,
                               List<MultipartFile> images,
@@ -82,4 +88,54 @@ public class CapsuleService {
         Files.write(filePath, file.getBytes());
         return filePath.toString();
     }
+
+    public List<Capsule> getAllUnopenedCapsules() {
+        return capsuleRepository.findByOpenedFalse();
+    }
+
+    public void markCapsuleAsOpened(Long id) {
+        Capsule capsule = capsuleRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Capsule not found with id: " + id));
+        capsule.setOpened(true);
+        capsuleRepository.save(capsule);
+    }
+
+    public List<Capsule> getOpenedCapsules() {
+        return capsuleRepository.findByOpenedTrue();
+    }
+
+    public Map<String, Object> convertToDto(Capsule capsule) {
+        Map<String, Object> dto = new HashMap<>();
+        dto.put("id", capsule.getId());
+        dto.put("title", capsule.getName());
+        dto.put("expiryDateTime", capsule.getExpiryDateTime());
+        dto.put("opened", capsule.isOpened());
+
+        List<String> imageUrls = new ArrayList<>();
+        List<String> videoUrls = new ArrayList<>();
+        List<String> fileUrls = new ArrayList<>();
+        String message = null;
+
+        for (CapsuleData data : capsule.getCapsuleDataList()) {
+            switch (data.getDataType()) {
+                case "text" -> message = data.getContent();
+                case "image" -> imageUrls.add(convertPathToUrl(data.getContent()));
+                case "video" -> videoUrls.add(convertPathToUrl(data.getContent()));
+                case "file" -> fileUrls.add(convertPathToUrl(data.getContent()));
+            }
+        }
+
+        dto.put("message", message);
+        dto.put("imageUrls", imageUrls);
+        dto.put("videoUrls", videoUrls);
+        dto.put("fileUrls", fileUrls);
+
+        return dto;
+    }
+
+    private String convertPathToUrl(String path) {
+        String fixedPath = path.replace("\\", "/");
+        return "http://localhost:8080/" + fixedPath;
+    }
+
 }

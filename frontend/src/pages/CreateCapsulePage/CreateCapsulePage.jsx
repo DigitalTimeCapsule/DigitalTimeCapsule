@@ -27,7 +27,7 @@ const CreateCapsulePage = () => {
 
         const formData = new FormData();
         formData.append("title", data.title);
-        formData.append("expiryDate", data.expiryDate);
+        formData.append("openDate", data.openDate);
 
         if (data.message) {
             formData.append("message", data.message);
@@ -157,7 +157,7 @@ const CreateCapsulePage = () => {
                         <input
                             type="datetime-local"
                             min={tomorrow}
-                            {...register("expiryDate", {required: "Expiry Date is required"})}
+                            {...register("openDate", {required: "Expiry Date is required"})}
                         />
                     </div>
 

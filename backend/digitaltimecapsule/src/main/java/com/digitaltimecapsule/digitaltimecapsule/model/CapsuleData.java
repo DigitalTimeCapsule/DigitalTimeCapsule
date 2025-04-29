@@ -1,6 +1,8 @@
 package com.digitaltimecapsule.digitaltimecapsule.model;
 
 import jakarta.persistence.*;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+import com.fasterxml.jackson.annotation.JsonBackReference;
 
 @Entity
 public class CapsuleData {
@@ -16,6 +18,7 @@ public class CapsuleData {
 
     @ManyToOne
     @JoinColumn(name = "capsule_id")
+    @JsonBackReference
     private Capsule capsule;
 
     // Getters, setters

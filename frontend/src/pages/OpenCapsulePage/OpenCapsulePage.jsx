@@ -7,38 +7,7 @@ import "./OpenCapsulePage.css";
 Modal.setAppElement("#root");
 
 const OpenCapsulePage = () => {
-    const [capsules, setCapsules] = useState([{
-        id: 1,
-        title: "Graduation Message",
-        message: "Congratulations! You've made it to the end!",
-        imageUrls: ["https://picsum.photos/200?random=1"],
-        videoUrls: ["https://www.w3schools.com/html/mov_bbb.mp4"],
-        fileUrls: ["https://www.orimi.com/pdf-test.pdf"],
-        expiryDate: "2024-12-25T10:00:00"
-    },
-        {
-            id: 2,
-            title: "Time Capsule from 2022",
-            message: "I hope you're doing well and following your dreams.",
-            imageUrls: [
-                "https://picsum.photos/200?random=2",
-                "https://picsum.photos/200?random=3"
-            ],
-            videoUrls: [],
-            fileUrls: [],
-            expiryDate: "2027-06-10T09:30:00"
-        },
-        {
-            id: 3,
-            title: "Dream Journal",
-            message: "Here are the things I wanted to achieve in 5 years.",
-            imageUrls: [],
-            videoUrls: [],
-            fileUrls: [
-                "https://file-examples.com/storage/fed137caae12a9ea6a4b5e6/2017/10/file-sample_150kB.pdf"
-            ],
-            expiryDate: "2026-05-15T14:00:00"
-        }]);
+    const [capsules, setCapsules] = useState([]);
     const [selectedCapsule, setSelectedCapsule] = useState(null);
     const navigate = useNavigate();
 
@@ -58,7 +27,12 @@ const OpenCapsulePage = () => {
         };
 
         fetchUnopenedCapsules();
-    }, [capsules]);
+    }, []);
+
+    const fixPath = (path) => {
+        console.log(path)
+        return "http://localhost:8080/" + path.replace(/\\/g, '/');
+    };
 
     return (
         <div className="capsule-open-page-container">
@@ -67,8 +41,8 @@ const OpenCapsulePage = () => {
             </button>
             <h2>🔒 Open Capsules</h2>
             <div className="capsule-list">
-                {capsules.map((capsule) => {
-                    const isLocked = new Date(capsule.expiryDate) > new Date();
+                {capsules.length > 0 && capsules.map((capsule) => {
+                    const isLocked = new Date(capsule.expiryDateTime) > new Date();
 
                     return (
                         <div
@@ -88,8 +62,16 @@ const OpenCapsulePage = () => {
                             }}
                             style={{cursor: isLocked ? "not-allowed" : "pointer", opacity: isLocked ? 0.6 : 1}}
                         >
-                            <h3>{capsule.title}</h3>
-                            <p>Opens on: {new Date(capsule.expiryDate).toLocaleDateString()}</p>
+                            <h3>{capsule.name}</h3>
+                            <p>Opens on: {new Date(capsule.expiryDateTime).toLocaleString('en-GB', {
+                                day: '2-digit',
+                                month: 'short',
+                                year: 'numeric',
+                                hour: '2-digit',
+                                minute: '2-digit',
+                                hour12: false
+                            })}
+                            </p>
                             {isLocked && <p style={{color: "#d00"}}>🔒 Locked</p>}
                         </div>
                     );
@@ -105,47 +87,57 @@ const OpenCapsulePage = () => {
             >
                 {selectedCapsule && (
                     <div className="capsule-modal-content">
-                        <h2>{selectedCapsule.title}</h2>
+                        <h2>{selectedCapsule.name}</h2>
 
-                        {selectedCapsule.message && (
-                            <>
+                        {/* Group data types */}
+                        {selectedCapsule.capsuleDataList?.filter(data => data.dataType === "text").map((textData, index) => (
+                            <div key={index}>
                                 <h4>📩 Message</h4>
-                                <p>{selectedCapsule.message}</p>
-                            </>
-                        )}
+                                <p>{textData.content}</p>
+                            </div>
+                        ))}
 
-                        {selectedCapsule.imageUrls?.length > 0 && (
+                        {selectedCapsule.capsuleDataList?.filter(data => data.dataType === "image").length > 0 && (
                             <>
                                 <h4>🖼️ Images</h4>
                                 <div className="media-row">
-                                    {selectedCapsule.imageUrls.map((url, i) => (
-                                        <img key={i} src={url} alt={`img-${i}`}/>
-                                    ))}
+                                    {selectedCapsule.capsuleDataList
+                                        .filter(data => data.dataType === "image")
+                                        .map((imageData, index) => (
+                                            <img key={index} src={fixPath(imageData.content)} alt={`img-${index}`}/>
+                                        ))}
                                 </div>
                             </>
                         )}
 
-                        {selectedCapsule.videoUrls?.length > 0 && (
+                        {selectedCapsule.capsuleDataList?.filter(data => data.dataType === "video").length > 0 && (
                             <>
                                 <h4>🎥 Videos</h4>
                                 <div className="media-row">
-                                    {selectedCapsule.videoUrls.map((url, i) => (
-                                        <video key={i} controls width="250">
-                                            <source src={url} type="video/mp4"/>
-                                        </video>
-                                    ))}
+                                    {selectedCapsule.capsuleDataList
+                                        .filter(data => data.dataType === "video")
+                                        .map((videoData, index) => (
+                                            <video key={index} controls width="250">
+                                                <source src={fixPath(videoData.content)} type="video/mp4"/>
+                                            </video>
+                                        ))}
                                 </div>
                             </>
                         )}
 
-                        {selectedCapsule.fileUrls?.length > 0 && (
+                        {selectedCapsule.capsuleDataList?.filter(data => data.dataType === "file").length > 0 && (
                             <>
                                 <h4>📎 Files</h4>
                                 <ul>
-                                    {selectedCapsule.fileUrls.map((url, i) => (
-                                        <li key={i}><a href={url} target="_blank" rel="noreferrer">Download
-                                            File {i + 1}</a></li>
-                                    ))}
+                                    {selectedCapsule.capsuleDataList
+                                        .filter(data => data.dataType === "file")
+                                        .map((fileData, index) => (
+                                            <li key={index}>
+                                                <a href={fixPath(fileData.content)} target="_blank" rel="noreferrer">
+                                                    Download File {index + 1}
+                                                </a>
+                                            </li>
+                                        ))}
                                 </ul>
                             </>
                         )}
