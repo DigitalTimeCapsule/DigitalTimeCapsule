@@ -8,6 +8,12 @@ import org.springframework.web.bind.annotation.*;
 import com.digitaltimecapsule.digitaltimecapsule.model.User;
 import com.digitaltimecapsule.digitaltimecapsule.service.UserService;
 import com.digitaltimecapsule.digitaltimecapsule.security.JwtUtil;
+import com.digitaltimecapsule.digitaltimecapsule.model.User;
+import com.digitaltimecapsule.digitaltimecapsule.service.UserService;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/users")
