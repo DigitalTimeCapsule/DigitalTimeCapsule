@@ -7,23 +7,7 @@ import {useNavigate} from "react-router-dom";
 Modal.setAppElement("#root");
 
 const CapsuleHistoryPage = () => {
-    const [capsules, setCapsules] = useState([{
-        "id": 1,
-        "title": "My First Capsule",
-        "message": "Hello from the past!",
-        "imageUrls": ["https://picsum.photos/200"],
-        "videoUrls": ["https://picsum.photos/200"],
-        "fileUrls": ["https://picsum.photos/200"],
-        "expiryDate": new Date("2024-12-19T03:24:30"),
-    }, {
-        "id": 2,
-        "title": "My Second Capsule",
-        "message": "Hello from the past!",
-        "imageUrls": ["https://picsum.photos/200", "https://picsum.photos/200", "https://picsum.photos/200", "https://picsum.photos/200", "https://picsum.photos/200", "https://picsum.photos/200", "https://picsum.photos/200", "https://picsum.photos/200", "https://picsum.photos/200", "https://picsum.photos/200", "https://picsum.photos/200", "https://picsum.photos/200"],
-        "videoUrls": ["https://picsum.photos/200"],
-        "fileUrls": ["https://picsum.photos/200"],
-        "expiryDate": new Date("2023-12-19T03:24:30"),
-    }]);
+    const [capsules, setCapsules] = useState([]);
     const [selectedCapsule, setSelectedCapsule] = useState(null);
     const navigate = useNavigate();
 

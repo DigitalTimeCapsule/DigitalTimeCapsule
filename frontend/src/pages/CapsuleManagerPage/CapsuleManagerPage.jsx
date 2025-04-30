@@ -8,18 +8,20 @@ import axios from "axios";
 
 const CapsuleManagerPage = () => {
     const navigate = useNavigate();
-    const [numOfUnopened, setNumOfUnopened] = useState(3);
-    const [numOfOpened, setNumOfOpened] = useState(2);
+    const [numOfUnopened, setNumOfUnopened] = useState();
+    const [numOfOpened, setNumOfOpened] = useState();
 
     useEffect(() => {
         const fetchCapsules = async () => {
             try {
                 const token = localStorage.getItem("authToken")
-                const response = await axios.get("https://localhost:8080/api/capsules", {
+                const response = await axios.get("http://localhost:8080/api/capsules", {
                     headers: {
                         Authorization: `Bearer ${token}`
                     }
                 });
+
+                console.log(response.data)
                 const opened = response.data.filter(capsule => capsule.opened).length;
                 const unopened = response.data.filter(capsule => !capsule.opened).length;
 
