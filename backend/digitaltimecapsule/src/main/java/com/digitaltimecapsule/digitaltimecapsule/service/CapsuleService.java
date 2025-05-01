@@ -19,6 +19,9 @@ import java.util.List;
 import java.util.UUID;
 import java.util.HashMap;
 import java.util.Map;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
+import java.util.Base64;
 
 @Service
 public class CapsuleService {
@@ -82,11 +85,70 @@ public class CapsuleService {
     }
 
     private String saveFile(MultipartFile file) throws IOException {
-        String fileName = UUID.randomUUID() + "_" + file.getOriginalFilename();
-        Path filePath = Paths.get(uploadDir, fileName);
+        // Calculate file hash
+        String fileHash = calculateFileHash(file);
+        
+        // Check if file with same hash exists
+        String existingFilePath = findFileByHash(fileHash);
+        if (existingFilePath != null) {
+            return existingFilePath;
+        }
+
+        // Generate secure filename
+        String secureFileName = generateSecureFileName(file.getOriginalFilename());
+        Path filePath = Paths.get(uploadDir, secureFileName);
+        
+        // Create directories if they don't exist
         Files.createDirectories(filePath.getParent());
+        
+        // Save the file
         Files.write(filePath, file.getBytes());
+        
+        // Store the hash in a separate file for future reference
+        storeFileHash(secureFileName, fileHash);
+        
         return filePath.toString();
+    }
+
+    private String calculateFileHash(MultipartFile file) throws IOException {
+        try {
+            MessageDigest digest = MessageDigest.getInstance("SHA-256");
+            byte[] hash = digest.digest(file.getBytes());
+            return Base64.getEncoder().encodeToString(hash);
+        } catch (NoSuchAlgorithmException e) {
+            throw new RuntimeException("Error calculating file hash", e);
+        }
+    }
+
+    private String findFileByHash(String hash) throws IOException {
+        Path hashFile = Paths.get(uploadDir, "file_hashes.txt");
+        if (!Files.exists(hashFile)) {
+            return null;
+        }
+
+        List<String> lines = Files.readAllLines(hashFile);
+        for (String line : lines) {
+            String[] parts = line.split(":");
+            if (parts.length == 2 && parts[1].equals(hash)) {
+                return Paths.get(uploadDir, parts[0]).toString();
+            }
+        }
+        return null;
+    }
+
+    private void storeFileHash(String fileName, String hash) throws IOException {
+        Path hashFile = Paths.get(uploadDir, "file_hashes.txt");
+        String entry = fileName + ":" + hash + "\n";
+        Files.write(hashFile, entry.getBytes(), java.nio.file.StandardOpenOption.CREATE, java.nio.file.StandardOpenOption.APPEND);
+    }
+
+    private String generateSecureFileName(String originalFileName) {
+        String extension = "";
+        int lastDot = originalFileName.lastIndexOf('.');
+        if (lastDot > 0) {
+            extension = originalFileName.substring(lastDot);
+        }
+        return UUID.randomUUID().toString() + extension;
     }
 
     public List<Capsule> getAllUnopenedCapsules() {
