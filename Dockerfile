@@ -1,11 +1,11 @@
 # Build stage
 FROM maven:3.8.2-jdk-11 AS build
 
-# Set the working directory to the backend/digitaltimecapsule directory
+# Set the working directory to the location of your pom.xml
 WORKDIR /app/backend/digitaltimecapsule
 
-# Copy the entire project into the container
-COPY . .
+# Copy the pom.xml and source code into the container
+COPY backend/digitaltimecapsule /app/backend/digitaltimecapsule
 
 # Build the Spring Boot app with Maven (skip tests for faster build)
 RUN mvn clean package -DskipTests
