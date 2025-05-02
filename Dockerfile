@@ -1,6 +1,9 @@
 # Build stage
 FROM maven:3.8.2-jdk-11 AS build
 
+# Set the working directory to the backend/digitaltimecapsule directory
+WORKDIR /app/backend/digitaltimecapsule
+
 # Copy the entire project into the container
 COPY . .
 
@@ -11,7 +14,7 @@ RUN mvn clean package -DskipTests
 FROM openjdk:11-jdk-slim
 
 # Copy the built .jar file from the build stage
-COPY --from=build /target/DigitalTimeCapsule-0.0.1-SNAPSHOT.jar DigitalTimeCapsule.jar
+COPY --from=build /app/backend/digitaltimecapsule/target/DigitalTimeCapsule-0.0.1-SNAPSHOT.jar DigitalTimeCapsule.jar
 
 # Expose the port that the app will run on
 EXPOSE 8080
