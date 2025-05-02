@@ -32,6 +32,9 @@ public class CapsuleService {
     @Autowired
     private CapsuleRepository capsuleRepository;
 
+    @Autowired
+    private EncryptionService encryptionService;
+
     public List<Capsule> getAllCapsules() {
         return capsuleRepository.findAll();
     }
@@ -53,7 +56,7 @@ public class CapsuleService {
         if (message != null && !message.isBlank()) {
             CapsuleData textData = new CapsuleData();
             textData.setDataType("text");
-            textData.setContent(message);
+            textData.setContent(encryptionService.encrypt(message));
             textData.setCapsule(capsule);
             capsuleDataList.add(textData);
         }
@@ -85,29 +88,60 @@ public class CapsuleService {
     }
 
     private String saveFile(MultipartFile file) throws IOException {
-        // Calculate file hash
-        String fileHash = calculateFileHash(file);
-        
-        // Check if file with same hash exists
-        String existingFilePath = findFileByHash(fileHash);
-        if (existingFilePath != null) {
-            return existingFilePath;
-        }
+        try {
+            // Calculate file hash
+            String fileHash = calculateFileHash(file);
+            
+            // Check if file with same hash exists
+            String existingFilePath = findFileByHash(fileHash);
+            if (existingFilePath != null) {
+                return existingFilePath;
+            }
 
-        // Generate secure filename
-        String secureFileName = generateSecureFileName(file.getOriginalFilename());
-        Path filePath = Paths.get(uploadDir, secureFileName);
-        
-        // Create directories if they don't exist
-        Files.createDirectories(filePath.getParent());
-        
-        // Save the file
-        Files.write(filePath, file.getBytes());
-        
-        // Store the hash in a separate file for future reference
-        storeFileHash(secureFileName, fileHash);
-        
-        return filePath.toString();
+            // Generate secure filename
+            String secureFileName = generateSecureFileName(file.getOriginalFilename());
+            Path tempFilePath = Paths.get(uploadDir, "temp_" + secureFileName);
+            Path encryptedFilePath = Paths.get(uploadDir, secureFileName);
+            
+            // Create directories if they don't exist
+            Files.createDirectories(tempFilePath.getParent());
+            
+            // Save the file temporarily
+            Files.write(tempFilePath, file.getBytes());
+            
+            // Encrypt the file
+            encryptionService.encryptFile(tempFilePath, encryptedFilePath);
+            
+            // Delete the temporary file
+            Files.delete(tempFilePath);
+            
+            // Store the hash in a separate file for future reference
+            storeFileHash(secureFileName, fileHash);
+            
+            return encryptedFilePath.toString();
+        } catch (Exception e) {
+            throw new IOException("Failed to save and encrypt file", e);
+        }
+    }
+
+    private byte[] getDecryptedFileContent(String filePath) throws IOException {
+        try {
+            Path encryptedPath = Paths.get(filePath);
+            Path tempPath = Paths.get(filePath + ".decrypted");
+            
+            // Decrypt the file
+            encryptionService.decryptFile(encryptedPath, tempPath);
+            
+            // Read the decrypted content
+            byte[] content = Files.readAllBytes(tempPath);
+            
+            // Delete the temporary decrypted file
+            Files.delete(tempPath);
+            
+            return content;
+        } catch (Exception e) {
+            throw new IOException("Failed to decrypt file", e);
+        }
     }
 
     private String calculateFileHash(MultipartFile file) throws IOException {
@@ -180,10 +214,21 @@ public class CapsuleService {
 
         for (CapsuleData data : capsule.getCapsuleDataList()) {
             switch (data.getDataType()) {
-                case "text" -> message = data.getContent();
-                case "image" -> imageUrls.add(convertPathToUrl(data.getContent()));
-                case "video" -> videoUrls.add(convertPathToUrl(data.getContent()));
-                case "file" -> fileUrls.add(convertPathToUrl(data.getContent()));
+                case "text" -> {
+                    message = encryptionService.decrypt(data.getContent());
+                }
+                case "image" -> {
+                    String filename = Paths.get(data.getContent()).getFileName().toString();
+                    imageUrls.add("http://localhost:8080/api/files/" + filename);
+                }
+                case "video" -> {
+                    String filename = Paths.get(data.getContent()).getFileName().toString();
+                    videoUrls.add("http://localhost:8080/api/files/" + filename);
+                }
+                case "file" -> {
+                    String filename = Paths.get(data.getContent()).getFileName().toString();
+                    fileUrls.add("http://localhost:8080/api/files/" + filename);
+                }
             }
         }
 
@@ -195,9 +240,12 @@ public class CapsuleService {
         return dto;
     }
 
-    private String convertPathToUrl(String path) {
-        String fixedPath = path.replace("\\", "/");
-        return "http://localhost:8080/" + fixedPath;
+    private String getFileExtension(String filePath) {
+        int lastDot = filePath.lastIndexOf('.');
+        if (lastDot > 0) {
+            return filePath.substring(lastDot + 1);
+        }
+        return "";
     }
 
 }

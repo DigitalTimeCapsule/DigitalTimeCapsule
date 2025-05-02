@@ -1,8 +1,9 @@
-import React, {useEffect, useState} from "react";
+import React, { useEffect, useState } from "react";
 import axios from "axios";
 import Modal from "react-modal";
-import {useNavigate} from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import "./OpenCapsulePage.css";
+import AuthenticatedMedia from "../../components/AuthenticatedMedia";
 
 Modal.setAppElement("#root");
 
@@ -30,8 +31,9 @@ const OpenCapsulePage = () => {
     }, []);
 
     const fixPath = (path) => {
-        console.log(path)
-        return "http://localhost:8080/" + path.replace(/\\/g, '/');
+        // Extract just the filename from the path
+        const filename = path.split(/[\\/]/).pop();
+        return `http://localhost:8080/api/files/${filename}`;
     };
 
     return (
@@ -54,13 +56,13 @@ const OpenCapsulePage = () => {
 
                                     const token = localStorage.getItem("authToken");
                                     axios.put(`http://localhost:8080/api/capsules/${capsule.id}/mark-opened`, {}, {
-                                        headers: {Authorization: `Bearer ${token}`}
+                                        headers: { Authorization: `Bearer ${token}` }
                                     }).then(() => {
                                         setCapsules((prev) => prev.filter((c) => c.id !== capsule.id));
                                     }).catch((err) => console.error("Failed to mark capsule as opened:", err));
                                 }
                             }}
-                            style={{cursor: isLocked ? "not-allowed" : "pointer", opacity: isLocked ? 0.6 : 1}}
+                            style={{ cursor: isLocked ? "not-allowed" : "pointer", opacity: isLocked ? 0.6 : 1 }}
                         >
                             <h3>{capsule.name}</h3>
                             <p>Opens on: {new Date(capsule.expiryDateTime).toLocaleString('en-GB', {
@@ -72,7 +74,7 @@ const OpenCapsulePage = () => {
                                 hour12: false
                             })}
                             </p>
-                            {isLocked && <p style={{color: "#d00"}}>🔒 Locked</p>}
+                            {isLocked && <p style={{ color: "#d00" }}>🔒 Locked</p>}
                         </div>
                     );
                 })}
@@ -104,7 +106,13 @@ const OpenCapsulePage = () => {
                                     {selectedCapsule.capsuleDataList
                                         .filter(data => data.dataType === "image")
                                         .map((imageData, index) => (
-                                            <img key={index} src={fixPath(imageData.content)} alt={`img-${index}`}/>
+                                            <AuthenticatedMedia
+                                                key={index}
+                                                src={fixPath(imageData.content)}
+                                                type="image"
+                                                alt={`img-${index}`}
+                                                width={250}
+                                            />
                                         ))}
                                 </div>
                             </>
@@ -117,9 +125,13 @@ const OpenCapsulePage = () => {
                                     {selectedCapsule.capsuleDataList
                                         .filter(data => data.dataType === "video")
                                         .map((videoData, index) => (
-                                            <video key={index} controls width="250">
-                                                <source src={fixPath(videoData.content)} type="video/mp4"/>
-                                            </video>
+                                            <AuthenticatedMedia
+                                                key={index}
+                                                src={fixPath(videoData.content)}
+                                                type="video"
+                                                controls={true}
+                                                width={250}
+                                            />
                                         ))}
                                 </div>
                             </>

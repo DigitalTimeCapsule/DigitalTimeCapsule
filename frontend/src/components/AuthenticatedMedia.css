@@ -1,0 +1,19 @@
+.media-error {
+    color: #d9534f;
+    padding: 10px;
+    background-color: #f8d7da;
+    border: 1px solid #f5c6cb;
+    border-radius: 4px;
+    margin: 5px 0;
+    text-align: center;
+}
+
+.media-loading {
+    color: #6c757d;
+    padding: 10px;
+    background-color: #f8f9fa;
+    border: 1px solid #e9ecef;
+    border-radius: 4px;
+    margin: 5px 0;
+    text-align: center;
+}

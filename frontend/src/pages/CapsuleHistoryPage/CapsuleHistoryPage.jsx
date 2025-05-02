@@ -1,8 +1,9 @@
-import React, {useEffect, useState} from "react";
+import React, { useEffect, useState } from "react";
 import axios from "axios";
 import Modal from "react-modal";
 import "./CapsuleHistoryPage.css";
-import {useNavigate} from "react-router-dom";
+import { useNavigate } from "react-router-dom";
+import AuthenticatedMedia from "../../components/AuthenticatedMedia";
 
 Modal.setAppElement("#root");
 
@@ -28,6 +29,12 @@ const CapsuleHistoryPage = () => {
 
         fetchOpenedCapsules();
     }, []);
+
+    const fixPath = (path) => {
+        // Extract just the filename from the path
+        const filename = path.split(/[\\/]/).pop();
+        return `http://localhost:8080/api/files/${filename}`;
+    };
 
     return (
         <div className="capsule-history-page-container">
@@ -70,7 +77,13 @@ const CapsuleHistoryPage = () => {
                                 <h4>🖼️ Images</h4>
                                 <div className="media-row">
                                     {selectedCapsule.imageUrls.map((url, i) => (
-                                        <img key={i} src={url} alt={`img-${i}`}/>
+                                        <AuthenticatedMedia
+                                            key={i}
+                                            src={url}
+                                            type="image"
+                                            alt={`img-${i}`}
+                                            width={250}
+                                        />
                                     ))}
                                 </div>
                             </>
@@ -81,9 +94,13 @@ const CapsuleHistoryPage = () => {
                                 <h4>🎥 Videos</h4>
                                 <div className="media-row">
                                     {selectedCapsule.videoUrls.map((url, i) => (
-                                        <video key={i} controls width="250">
-                                            <source src={url} type="video/mp4"/>
-                                        </video>
+                                        <AuthenticatedMedia
+                                            key={i}
+                                            src={url}
+                                            type="video"
+                                            controls={true}
+                                            width={250}
+                                        />
                                     ))}
                                 </div>
                             </>
@@ -94,7 +111,7 @@ const CapsuleHistoryPage = () => {
                                 <h4>📎 Files</h4>
                                 <ul>
                                     {selectedCapsule.fileUrls.map((url, i) => (
-                                        <li key={i}><a href={url} target="_blank" rel="noreferrer">Download
+                                        <li key={i}><a href={fixPath(url)} target="_blank" rel="noreferrer">Download
                                             File {i + 1}</a></li>
                                     ))}
                                 </ul>

@@ -24,8 +24,9 @@ public class JwtFilter extends OncePerRequestFilter {
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response,
                                     FilterChain filterChain) throws ServletException, IOException {
 
-        // Skip JWT filter for /uploads/** path
-        if (request.getRequestURI().startsWith("/uploads/")) {
+        // Skip JWT filter for public endpoints
+        if (request.getRequestURI().startsWith("/api/users/register") || 
+            request.getRequestURI().startsWith("/api/users/login")) {
             filterChain.doFilter(request, response);
             return;
         }
@@ -39,7 +40,13 @@ public class JwtFilter extends OncePerRequestFilter {
                 UsernamePasswordAuthenticationToken auth = new UsernamePasswordAuthenticationToken(
                         email, null, null);
                 SecurityContextHolder.getContext().setAuthentication(auth);
+            } else {
+                response.setStatus(HttpServletResponse.SC_FORBIDDEN);
+                return;
             }
+        } else {
+            response.setStatus(HttpServletResponse.SC_FORBIDDEN);
+            return;
         }
 
         filterChain.doFilter(request, response);
