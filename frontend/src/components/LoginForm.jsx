@@ -1,18 +1,24 @@
 import React from "react";
 import {useForm} from "react-hook-form";
 import axios from "axios";
+import {useNavigate} from "react-router-dom";
 
 const LoginForm = ({onToggle}) => {
     const {register, handleSubmit, reset, formState: {errors}} = useForm();
-
+    const navigate = useNavigate();
     const handleLogin = async (data) => {
         try {
-            await axios.post("http://localhost:8080/api/users/login", {
+            const response = await axios.post("http://localhost:8080/api/users/login", {
                 email: data.email,
                 password: data.password,
             });
+
+            const token = response.data;
+            localStorage.setItem("authToken", token);
+
             alert("Login successful");
             reset();
+            navigate("/capsule-manager");
         } catch (error) {
             alert(error.response?.data?.message || "Login failed");
         }

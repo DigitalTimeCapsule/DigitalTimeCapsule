@@ -4,25 +4,37 @@ import java.util.List;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import org.springframework.web.filter.CorsFilter;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import com.digitaltimecapsule.digitaltimecapsule.security.JwtFilter;
+import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
+import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
+import org.springframework.web.servlet.resource.PathResourceResolver;
 
 @Configuration
 public class SecurityConfig {
 
+    @Autowired
+    private JwtFilter jwtFilter;
+
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
-            .csrf(csrf -> csrf.disable())  // Disable CSRF for testing (Enable for production)
-            .cors(cors -> cors.configurationSource(corsConfigurationSource())) // Apply CORS settings
-            .authorizeHttpRequests(auth -> auth
-                .requestMatchers("/api/users/**").permitAll() // Allow all requests for /api/users/*
-                .anyRequest().authenticated()  // Require authentication for other requests
-            );
-
+                .csrf(csrf -> csrf.disable())
+                .cors(cors -> cors.configurationSource(corsConfigurationSource()))
+                .authorizeHttpRequests(auth -> auth
+                        .requestMatchers("/api/users/register", "/api/users/login").permitAll()
+                        .requestMatchers("/api/users/validate").authenticated()
+                        .requestMatchers("/api/capsules/**").authenticated()
+                        .requestMatchers("/api/files/**").authenticated()
+                        .anyRequest().denyAll()
+                )
+                .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
         return http.build();
     }
 
@@ -41,6 +53,27 @@ public class SecurityConfig {
 
     @Bean
     public CorsFilter corsFilter() {
-        return new CorsFilter(corsConfigurationSource());
+        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+        CorsConfiguration config = new CorsConfiguration();
+        config.setAllowCredentials(true);
+        config.addAllowedOrigin("http://localhost:3000");
+        config.addAllowedHeader("*");
+        config.addAllowedMethod("*");
+        source.registerCorsConfiguration("/**", config);
+        return new CorsFilter(source);
+    }
+
+    @Bean
+    public WebMvcConfigurer webMvcConfigurer() {
+        return new WebMvcConfigurer() {
+            @Override
+            public void addResourceHandlers(ResourceHandlerRegistry registry) {
+                registry.addResourceHandler("/uploads/**")
+                        .addResourceLocations("file:uploads/")
+                        .setCachePeriod(3600)
+                        .resourceChain(true)
+                        .addResolver(new PathResourceResolver());
+            }
+        };
     }
 }
