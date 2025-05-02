@@ -83,6 +83,11 @@
             <artifactId>bcprov-jdk18on</artifactId>
             <version>1.77</version>
         </dependency>
+        <dependency>
+            <groupId>org.postgresql</groupId>
+            <artifactId>postgresql</artifactId>
+            <version>42.7.2</version> <!-- Or the latest version -->
+        </dependency>
     </dependencies>
 
     <build>
