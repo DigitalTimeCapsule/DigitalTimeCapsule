@@ -22,3 +22,8 @@ for a chosen period of time before it can be retrieved.
    ```bash
    cd backend/digitaltimecapsule
    mvn spring-boot:run
+
+## Backend URL
+
+https://digitaltimecapsule.onrender.com\
+Due to limitations of our free hosting, if the backend URL is down the frontend cannot be accessed. To resolve this, we need more money.
