@@ -14,7 +14,7 @@ RUN mvn clean package -DskipTests
 FROM openjdk:11-jdk-slim
 
 # Copy the built .jar file from the build stage
-COPY --from=build /app/backend/digitaltimecapsule/target/DigitalTimeCapsule-0.0.1-SNAPSHOT.jar DigitalTimeCapsule.jar
+COPY --from=build /app/backend/digitaltimecapsule/target/digitaltimecapsule-0.0.1-SNAPSHOT.jar DigitalTimeCapsule.jar
 
 # Expose the port that the app will run on
 EXPOSE 8080
