@@ -11,8 +11,6 @@ import java.util.List;
 
 @Repository
 public interface CapsuleRepository extends JpaRepository<Capsule, Long> {
-    List<Capsule> findByOpenedFalseAndExpiryDateTimeBefore(LocalDateTime now);
-
     List<Capsule> findByOpenedFalse();
 
     List<Capsule> findByOpenedTrue();
