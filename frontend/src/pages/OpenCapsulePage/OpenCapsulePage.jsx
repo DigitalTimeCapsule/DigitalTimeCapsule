@@ -4,6 +4,7 @@ import Modal from "react-modal";
 import { useNavigate } from "react-router-dom";
 import "./OpenCapsulePage.css";
 import AuthenticatedMedia from "../../components/AuthenticatedMedia";
+import config from "../../config";
 
 Modal.setAppElement("#root");
 
@@ -16,7 +17,7 @@ const OpenCapsulePage = () => {
         const fetchUnopenedCapsules = async () => {
             try {
                 const token = localStorage.getItem("authToken");
-                const response = await axios.get("http://localhost:8080/api/capsules/unopened", {
+                const response = await axios.get(`${config.apiUrl}/capsules/unopened`, {
                     headers: {
                         Authorization: `Bearer ${token}`
                     }
@@ -33,7 +34,7 @@ const OpenCapsulePage = () => {
     const fixPath = (path) => {
         // Extract just the filename from the path
         const filename = path.split(/[\\/]/).pop();
-        return `http://localhost:8080/api/files/${filename}`;
+        return `${config.apiUrl}/files/${filename}`;
     };
 
     return (
@@ -55,7 +56,7 @@ const OpenCapsulePage = () => {
                                     setSelectedCapsule(capsule);
 
                                     const token = localStorage.getItem("authToken");
-                                    axios.put(`http://localhost:8080/api/capsules/${capsule.id}/mark-opened`, {}, {
+                                    axios.put(`${config.apiUrl}/capsules/${capsule.id}/mark-opened`, {}, {
                                         headers: { Authorization: `Bearer ${token}` }
                                     }).then(() => {
                                         setCapsules((prev) => prev.filter((c) => c.id !== capsule.id));

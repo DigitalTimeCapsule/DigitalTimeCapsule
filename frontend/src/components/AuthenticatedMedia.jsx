@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import './AuthenticatedMedia.css';
+import config from '../config';
 
 const AuthenticatedMedia = ({ src, type, alt, controls, width }) => {
     const [mediaUrl, setMediaUrl] = useState(null);
@@ -49,7 +50,7 @@ const AuthenticatedMedia = ({ src, type, alt, controls, width }) => {
                     // Try to validate the token
                     try {
                         const token = localStorage.getItem('authToken');
-                        const validateResponse = await axios.get('http://localhost:8080/api/users/validate', {
+                        const validateResponse = await axios.get(`${config.apiUrl}/users/validate`, {
                             headers: {
                                 Authorization: `Bearer ${token}`
                             }

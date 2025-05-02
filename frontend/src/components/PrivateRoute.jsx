@@ -1,8 +1,9 @@
-import React, {useEffect, useState} from "react";
-import {Navigate} from "react-router-dom";
+import React, { useEffect, useState } from "react";
+import { Navigate } from "react-router-dom";
 import axios from "axios";
+import config from "../config";
 
-const PrivateRoute = ({children}) => {
+const PrivateRoute = ({ children }) => {
     const [isValid, setIsValid] = useState(null);
 
     useEffect(() => {
@@ -14,7 +15,7 @@ const PrivateRoute = ({children}) => {
             }
 
             try {
-                await axios.get("http://localhost:8080/api/users/validate", {
+                await axios.get(`${config.apiUrl}/users/validate`, {
                     headers: {
                         Authorization: `Bearer ${token}`,
                     },
@@ -34,7 +35,7 @@ const PrivateRoute = ({children}) => {
         return <div>Loading...</div>;
     }
 
-    return isValid ? children : <Navigate to="/login" replace/>;
+    return isValid ? children : <Navigate to="/login" replace />;
 };
 
 export default PrivateRoute;

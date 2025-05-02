@@ -1,14 +1,15 @@
 import React from "react";
-import {useForm} from "react-hook-form";
+import { useForm } from "react-hook-form";
 import axios from "axios";
-import {useNavigate} from "react-router-dom";
+import { useNavigate } from "react-router-dom";
+import config from "../config";
 
-const LoginForm = ({onToggle}) => {
-    const {register, handleSubmit, reset, formState: {errors}} = useForm();
+const LoginForm = ({ onToggle }) => {
+    const { register, handleSubmit, reset, formState: { errors } } = useForm();
     const navigate = useNavigate();
     const handleLogin = async (data) => {
         try {
-            const response = await axios.post("http://localhost:8080/api/users/login", {
+            const response = await axios.post(`${config.apiUrl}/users/login`, {
                 email: data.email,
                 password: data.password,
             });

@@ -1,9 +1,10 @@
 import React from "react";
-import {useForm} from "react-hook-form";
+import { useForm } from "react-hook-form";
 import axios from "axios";
+import config from "../config";
 
-const SignupForm = ({onToggle}) => {
-    const {register, handleSubmit, reset, formState: {errors}} = useForm();
+const SignupForm = ({ onToggle }) => {
+    const { register, handleSubmit, reset, formState: { errors } } = useForm();
 
     const handleSignup = async (data) => {
         if (data.password !== data.confirmPassword) {
@@ -12,7 +13,7 @@ const SignupForm = ({onToggle}) => {
         }
 
         try {
-            await axios.post("http://localhost:8080/api/users/register", {
+            await axios.post(`${config.apiUrl}/users/register`, {
                 email: data.email,
                 password: data.password,
             });

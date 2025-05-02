@@ -4,6 +4,7 @@ import Modal from "react-modal";
 import "./CapsuleHistoryPage.css";
 import { useNavigate } from "react-router-dom";
 import AuthenticatedMedia from "../../components/AuthenticatedMedia";
+import config from "../../config";
 
 Modal.setAppElement("#root");
 
@@ -16,7 +17,7 @@ const CapsuleHistoryPage = () => {
         const fetchOpenedCapsules = async () => {
             try {
                 const token = localStorage.getItem("authToken");
-                const response = await axios.get("http://localhost:8080/api/capsules/opened", {
+                const response = await axios.get(`${config.apiUrl}/capsules/opened`, {
                     headers: {
                         Authorization: `Bearer ${token}`
                     }
@@ -33,7 +34,7 @@ const CapsuleHistoryPage = () => {
     const fixPath = (path) => {
         // Extract just the filename from the path
         const filename = path.split(/[\\/]/).pop();
-        return `http://localhost:8080/api/files/${filename}`;
+        return `${config.apiUrl}/files/${filename}`;
     };
 
     return (
