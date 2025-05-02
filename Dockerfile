@@ -11,7 +11,7 @@ COPY backend/digitaltimecapsule /app/backend/digitaltimecapsule
 RUN mvn clean package -DskipTests
 
 # Package stage
-FROM openjdk:11-jdk-slim
+FROM openjdk:17-jdk-slim
 
 # Copy the built .jar file from the build stage
 COPY --from=build /app/backend/digitaltimecapsule/target/digitaltimecapsule-0.0.1-SNAPSHOT.jar DigitalTimeCapsule.jar
