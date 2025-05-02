@@ -66,3 +66,8 @@ jobs:
           path: ~/.m2
           key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
           restore-keys: ${{ runner.os }}-m2
+
+      - name: Trigger Render Deployment
+        if: success()
+        run: |
+          curl -X POST "${{ secrets.RENDER_DEPLOY_HOOK }}"
