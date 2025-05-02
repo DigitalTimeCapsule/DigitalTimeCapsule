@@ -1,5 +1,5 @@
 # Build stage
-FROM maven:3.8.2-jdk-11 AS build
+FROM maven:3.8.2-openjdk-17 AS build
 
 # Set the working directory to the location of your pom.xml
 WORKDIR /app/backend/digitaltimecapsule
